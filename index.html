@@ -14,7 +14,7 @@
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Amiri:wght@400;700&family=Noto+Nastaliq+Urdu:wght@400;700&family=Aref+Ruqaa:wght@400;700&family=Lalezar&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#111111;
@@ -517,15 +517,309 @@
     .records-wrap{ padding:0 12px 14px; }
   }
 
+  /* عرض‌های بینابینی (مثلاً تبلت افقی) که ستون پیش‌نمایش از ۶۴۰ پیکسل کمتر است: همان کوچک‌نمایی موبایل */
+  @media screen{
+    #invoiceSheet.fit-scaled{ width:640px; padding:24px 26px; zoom:var(--screen-scale, 1); min-height:0; }
+    .sheet-shadow.fit-scaled-wrap{ overflow-x:hidden; }
+  }
   @media screen and (max-width: 760px){
     #invoiceSheet{ width:640px; padding:24px 26px; font-size:13px; zoom:var(--screen-scale, 1); }
     table.inv-table{ font-size:13px; }
     .sheet-shadow{ overflow-x:hidden; }
   }
 
+  /* ---------- قالب‌ها و پالت‌های فاکتور ---------- */
+  .inv-sheet{ --inv-accent:#111111; --inv-tint:#f2f2f2; --inv-on:#ffffff; --inv-soft:#bdbdbd; }
+  @supports (color: color-mix(in srgb, red 50%, white)){
+    .inv-sheet{ --inv-soft: color-mix(in srgb, var(--inv-accent) 35%, #ffffff); }
+  }
+  #invoiceSheet, #invoiceSheet *{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+
+  /* کلاسیک: همان ظاهر قبلی، با رنگ انتخابی برای خطوط و سرتیتر جدول */
+  #invoiceSheet[data-template="classic"]{ border-color:var(--inv-accent); }
+  .inv-sheet[data-template="classic"] .inv-header{ border-bottom-color:var(--inv-accent); }
+  .inv-sheet[data-template="classic"] .cust-box,
+  .inv-sheet[data-template="classic"] .inv-totals,
+  .inv-sheet[data-template="classic"] .inv-note,
+  .inv-sheet[data-template="classic"] .inv-payment-box,
+  .inv-sheet[data-template="classic"] table.inv-table{ border-color:var(--inv-accent); }
+  .inv-sheet[data-template="classic"] table.inv-table thead th{ background:var(--inv-accent); border-color:var(--inv-accent); color:var(--inv-on); }
+  .inv-sheet[data-template="classic"] .inv-totals .grand{ border-top-color:var(--inv-accent); }
+  .inv-sheet[data-template="classic"] .inv-footer{ border-top-color:var(--inv-accent); }
+
+  /* مدرن: بدون کادرهای سنگین، جعبه‌های رنگ‌روشن گرد و نوار رنگی بالا */
+  #invoiceSheet[data-template="modern"]{ border:none; border-top:7px solid var(--inv-accent); }
+  .inv-sheet[data-template="modern"] .inv-header{ border-bottom:none; padding-bottom:8px; }
+  .inv-sheet[data-template="modern"] .inv-brand-name,
+  .inv-sheet[data-template="modern"] .inv-meta .num{ color:var(--inv-accent); }
+  .inv-sheet[data-template="modern"] .cust-box,
+  .inv-sheet[data-template="modern"] .inv-totals,
+  .inv-sheet[data-template="modern"] .inv-note,
+  .inv-sheet[data-template="modern"] .inv-payment-box{ background:var(--inv-tint); border:none; border-radius:10px; }
+  .inv-sheet[data-template="modern"] table.inv-table{ border:none; border-collapse:separate; border-spacing:0; }
+  .inv-sheet[data-template="modern"] table.inv-table thead th{ background:var(--inv-accent); color:var(--inv-on); border:none; }
+  .inv-sheet[data-template="modern"] table.inv-table thead th:first-child{ border-top-right-radius:8px; }
+  .inv-sheet[data-template="modern"] table.inv-table thead th:last-child{ border-top-left-radius:8px; }
+  .inv-sheet[data-template="modern"] table.inv-table tbody td{ border:none; border-bottom:1px solid #e6e6e6; }
+  .inv-sheet[data-template="modern"] table.inv-table tbody tr:nth-child(even){ background:transparent; }
+  .inv-sheet[data-template="modern"] .inv-totals .grand{ border-top-color:var(--inv-accent); color:var(--inv-accent); }
+  .inv-sheet[data-template="modern"] .inv-footer{ border-top:1px solid #dcdcdc; }
+
+  /* مینیمال: فقط خط‌های نازک و رنگ در عنوان‌ها */
+  #invoiceSheet[data-template="minimal"]{ border:none; }
+  .inv-sheet[data-template="minimal"] .inv-header{ border-bottom:1px solid #c9c9c9; }
+  .inv-sheet[data-template="minimal"] .inv-meta .num{ color:var(--inv-accent); }
+  .inv-sheet[data-template="minimal"] .cust-box{ background:transparent; border:none; border-top:1px solid #d4d4d4; border-bottom:1px solid #d4d4d4; padding-left:2px; padding-right:2px; }
+  .inv-sheet[data-template="minimal"] table.inv-table{ border:none; }
+  .inv-sheet[data-template="minimal"] table.inv-table thead th{ background:transparent; color:var(--inv-accent); border:none; border-bottom:2px solid var(--inv-accent); }
+  .inv-sheet[data-template="minimal"] table.inv-table tbody td{ border:none; border-bottom:1px solid #e4e4e4; }
+  .inv-sheet[data-template="minimal"] table.inv-table tbody tr:nth-child(even){ background:transparent; }
+  .inv-sheet[data-template="minimal"] .inv-totals{ border:none; padding:4px 2px; }
+  .inv-sheet[data-template="minimal"] .inv-totals .grand{ border-top:2px solid var(--inv-accent); color:var(--inv-accent); }
+  .inv-sheet[data-template="minimal"] .inv-note,
+  .inv-sheet[data-template="minimal"] .inv-payment-box{ border:none; border-right:3px solid var(--inv-accent); border-radius:0; background:transparent; }
+  .inv-sheet[data-template="minimal"] .inv-footer{ border-top:1px solid #d4d4d4; }
+
+  /* نواری: سربرگ تمام‌رنگ و جمع نهایی برجسته */
+  #invoiceSheet[data-template="banner"]{ border:1px solid #d9d9d9; }
+  .inv-sheet[data-template="banner"] .inv-header{ background:var(--inv-accent); color:var(--inv-on); border:none; border-radius:10px; padding:16px 18px; }
+  .inv-sheet[data-template="banner"] .inv-header .inv-brand-sub,
+  .inv-sheet[data-template="banner"] .inv-header .inv-brand-ids{ color:var(--inv-on); opacity:.85; }
+  .inv-sheet[data-template="banner"] .cust-box{ background:var(--inv-tint); border:none; border-right:5px solid var(--inv-accent); border-radius:6px; }
+  .inv-sheet[data-template="banner"] table.inv-table{ border:none; }
+  .inv-sheet[data-template="banner"] table.inv-table thead th{ background:var(--inv-accent); color:var(--inv-on); border:none; }
+  .inv-sheet[data-template="banner"] table.inv-table tbody td{ border:none; border-bottom:1px solid #e6e6e6; }
+  .inv-sheet[data-template="banner"] table.inv-table tbody tr:nth-child(even){ background:var(--inv-tint); }
+  .inv-sheet[data-template="banner"] .inv-totals{ background:var(--inv-tint); border:none; border-radius:8px; }
+  .inv-sheet[data-template="banner"] .inv-totals .grand{ background:var(--inv-accent); color:var(--inv-on); border:none; border-radius:8px; padding:10px 12px; margin-top:8px; }
+  .inv-sheet[data-template="banner"] .inv-note,
+  .inv-sheet[data-template="banner"] .inv-payment-box{ background:var(--inv-tint); border:none; border-radius:8px; }
+  .inv-sheet[data-template="banner"] .inv-footer{ border-top:2px solid var(--inv-accent); }
+
+  /* رسمی: کادر دوخطی و جدول خط‌دار */
+  #invoiceSheet[data-template="formal"]{ border:5px double var(--inv-accent); }
+  .inv-sheet[data-template="formal"] .inv-header{ border-bottom:3px double var(--inv-accent); }
+  .inv-sheet[data-template="formal"] .inv-brand-name{ color:var(--inv-accent); }
+  .inv-sheet[data-template="formal"] .cust-box,
+  .inv-sheet[data-template="formal"] .inv-totals,
+  .inv-sheet[data-template="formal"] .inv-note,
+  .inv-sheet[data-template="formal"] .inv-payment-box,
+  .inv-sheet[data-template="formal"] table.inv-table{ border:1px solid var(--inv-accent); border-radius:0; }
+  .inv-sheet[data-template="formal"] table.inv-table thead th{ background:var(--inv-tint); color:var(--inv-accent); border:1px solid var(--inv-accent); }
+  .inv-sheet[data-template="formal"] table.inv-table tbody td{ border:1px solid var(--inv-soft); }
+  .inv-sheet[data-template="formal"] table.inv-table tbody tr:nth-child(even){ background:transparent; }
+  .inv-sheet[data-template="formal"] .inv-totals .grand{ background:var(--inv-tint); color:var(--inv-accent); border-top:1.5px solid var(--inv-accent); padding:8px 6px; }
+  .inv-sheet[data-template="formal"] .inv-footer{ border-top:1px solid var(--inv-accent); }
+
+  /* مرکزی: سربرگ وسط‌چین با خط‌های رنگی بالا و پایین */
+  #invoiceSheet[data-template="centered"]{ border:none; border-top:5px solid var(--inv-accent); border-bottom:5px solid var(--inv-accent); }
+  .inv-sheet[data-template="centered"] .inv-header{ flex-direction:column; align-items:center; text-align:center; border-bottom:none; gap:10px; padding-bottom:0; }
+  .inv-sheet[data-template="centered"] .inv-brand{ flex-direction:column; text-align:center; }
+  .inv-sheet[data-template="centered"] .inv-brand-ids{ justify-content:center; }
+  .inv-sheet[data-template="centered"] .inv-brand-name{ color:var(--inv-accent); }
+  .inv-sheet[data-template="centered"] .inv-meta{ display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:4px 18px; width:100%; text-align:center; border-top:1px solid var(--inv-soft); border-bottom:1px solid var(--inv-soft); padding:7px 0; white-space:normal; }
+  .inv-sheet[data-template="centered"] .inv-meta div{ margin:0; }
+  .inv-sheet[data-template="centered"] .inv-meta .num{ color:var(--inv-accent); }
+  .inv-sheet[data-template="centered"] .cust-box{ background:var(--inv-tint); border:none; border-radius:6px; }
+  .inv-sheet[data-template="centered"] table.inv-table{ border:none; }
+  .inv-sheet[data-template="centered"] table.inv-table thead th{ background:var(--inv-accent); color:var(--inv-on); border:none; }
+  .inv-sheet[data-template="centered"] table.inv-table tbody td{ border:none; border-bottom:1px solid #e6e6e6; }
+  .inv-sheet[data-template="centered"] table.inv-table tbody tr:nth-child(even){ background:transparent; }
+  .inv-sheet[data-template="centered"] .inv-totals{ border:none; border-top:2px solid var(--inv-accent); border-bottom:2px solid var(--inv-accent); }
+  .inv-sheet[data-template="centered"] .inv-totals .grand{ color:var(--inv-accent); border-top-color:var(--inv-soft); }
+  .inv-sheet[data-template="centered"] .inv-note,
+  .inv-sheet[data-template="centered"] .inv-payment-box{ background:var(--inv-tint); border:none; border-radius:6px; }
+  .inv-sheet[data-template="centered"] .inv-footer{ border-top:1px solid var(--inv-soft); }
+
+  /* دوبخشی: سربرگ از دو بلوک (رنگ اصلی + رنگ روشن) */
+  #invoiceSheet[data-template="split"]{ border:1px solid #d6d6d6; }
+  .inv-sheet[data-template="split"] .inv-header{ padding:0; border:none; gap:0; align-items:stretch; border-radius:10px; overflow:hidden; }
+  .inv-sheet[data-template="split"] .inv-brand{ background:var(--inv-accent); color:var(--inv-on); padding:16px 18px; flex:1; }
+  .inv-sheet[data-template="split"] .inv-brand-sub,
+  .inv-sheet[data-template="split"] .inv-brand-ids{ color:var(--inv-on); opacity:.85; }
+  .inv-sheet[data-template="split"] .inv-meta{ background:var(--inv-tint); padding:16px 18px; display:flex; flex-direction:column; justify-content:center; }
+  .inv-sheet[data-template="split"] .inv-meta .num{ color:var(--inv-accent); }
+  .inv-sheet[data-template="split"] .cust-box{ border:1px solid var(--inv-soft); border-radius:8px; }
+  .inv-sheet[data-template="split"] table.inv-table{ border:1px solid var(--inv-soft); }
+  .inv-sheet[data-template="split"] table.inv-table thead th{ background:var(--inv-accent); color:var(--inv-on); border:1px solid var(--inv-accent); }
+  .inv-sheet[data-template="split"] table.inv-table tbody td{ border:1px solid var(--inv-soft); }
+  .inv-sheet[data-template="split"] table.inv-table tbody tr:nth-child(even){ background:var(--inv-tint); }
+  .inv-sheet[data-template="split"] .inv-totals,
+  .inv-sheet[data-template="split"] .inv-note,
+  .inv-sheet[data-template="split"] .inv-payment-box{ border:1px solid var(--inv-soft); border-radius:8px; }
+  .inv-sheet[data-template="split"] .inv-totals .grand{ color:var(--inv-accent); border-top-color:var(--inv-accent); }
+  .inv-sheet[data-template="split"] .inv-footer{ border-top:2px solid var(--inv-accent); }
+
+  /* کارتی: زمینهٔ رنگ‌روشن و هر بخش یک کارت سفید */
+  #invoiceSheet[data-template="card"]{ border:none; background:var(--inv-tint); }
+  .inv-sheet[data-template="card"] .inv-header{ background:#fff; border:1px solid var(--inv-soft); border-right:6px solid var(--inv-accent); border-radius:10px; padding:14px 16px; }
+  .inv-sheet[data-template="card"] .inv-brand-name{ color:var(--inv-accent); }
+  .inv-sheet[data-template="card"] .cust-box,
+  .inv-sheet[data-template="card"] .inv-totals,
+  .inv-sheet[data-template="card"] .inv-note,
+  .inv-sheet[data-template="card"] .inv-payment-box{ background:#fff; border:1px solid var(--inv-soft); border-radius:10px; }
+  .inv-sheet[data-template="card"] table.inv-table{ background:#fff; border:1px solid var(--inv-soft); border-collapse:separate; border-spacing:0; border-radius:10px; overflow:hidden; }
+  .inv-sheet[data-template="card"] table.inv-table thead th{ background:var(--inv-accent); color:var(--inv-on); border:none; }
+  .inv-sheet[data-template="card"] table.inv-table tbody td{ border:none; border-bottom:1px solid #ececec; }
+  .inv-sheet[data-template="card"] table.inv-table tbody tr:nth-child(even){ background:transparent; }
+  .inv-sheet[data-template="card"] .inv-totals .grand{ color:var(--inv-accent); border-top-color:var(--inv-accent); }
+  .inv-sheet[data-template="card"] .inv-footer{ border-top:1px solid var(--inv-soft); }
+
+  /* قاب‌دار: قاب ضخیم رنگی با خط نازک داخلی */
+  #invoiceSheet[data-template="frame"]{ border:9px solid var(--inv-accent); outline:1px solid var(--inv-accent); outline-offset:-16px; }
+  .inv-sheet[data-template="frame"] .inv-header{ border-bottom:2px solid var(--inv-accent); }
+  .inv-sheet[data-template="frame"] .inv-brand-name{ color:var(--inv-accent); }
+  .inv-sheet[data-template="frame"] .cust-box,
+  .inv-sheet[data-template="frame"] .inv-totals,
+  .inv-sheet[data-template="frame"] .inv-note,
+  .inv-sheet[data-template="frame"] .inv-payment-box,
+  .inv-sheet[data-template="frame"] table.inv-table{ border:1px solid var(--inv-accent); }
+  .inv-sheet[data-template="frame"] table.inv-table thead th{ background:var(--inv-accent); color:var(--inv-on); border:1px solid var(--inv-accent); }
+  .inv-sheet[data-template="frame"] table.inv-table tbody td{ border:1px solid var(--inv-soft); }
+  .inv-sheet[data-template="frame"] table.inv-table tbody tr:nth-child(even){ background:var(--inv-tint); }
+  .inv-sheet[data-template="frame"] .inv-totals .grand{ background:var(--inv-accent); color:var(--inv-on); border-top:none; padding:9px 8px; }
+  .inv-sheet[data-template="frame"] .inv-footer{ border-top:1px solid var(--inv-accent); }
+
+  /* فشرده: کم‌جوهر و فشرده برای فاکتورهای پرردیف (فضای کمتر، رنگ کمتر) */
+  #invoiceSheet[data-template="compact"]{ border:1px solid #8a8a8a; }
+  .inv-sheet[data-template="compact"][data-font="md"]{ --inv-fs:.92; }
+  .inv-sheet[data-template="compact"] .inv-header{ padding-bottom:8px; margin-bottom:10px; border-bottom:1.5px solid var(--inv-accent); }
+  .inv-sheet[data-template="compact"] .inv-brand img{ width:60px; height:60px; }
+  .inv-sheet[data-template="compact"] .inv-brand-name{ color:var(--inv-accent); }
+  .inv-sheet[data-template="compact"] .cust-box{ padding:6px 10px; gap:4px 14px; margin-bottom:10px; border:1px solid #a8a8a8; }
+  .inv-sheet[data-template="compact"] table.inv-table{ border:none; margin-bottom:10px; }
+  .inv-sheet[data-template="compact"] table.inv-table thead th{ background:transparent; color:var(--inv-accent); border:none; border-bottom:1.5px solid var(--inv-accent); padding:4px 6px; }
+  .inv-sheet[data-template="compact"] table.inv-table tbody td{ border:none; border-bottom:1px solid #dedede; padding:3px 6px; }
+  .inv-sheet[data-template="compact"] table.inv-table tbody tr:nth-child(even){ background:transparent; }
+  .inv-sheet[data-template="compact"] .inv-totals{ padding:5px 12px; margin-bottom:10px; border:1px solid #a8a8a8; }
+  .inv-sheet[data-template="compact"] .inv-totals div{ padding:2px 3px; }
+  .inv-sheet[data-template="compact"] .inv-totals .grand{ color:var(--inv-accent); border-top-color:var(--inv-accent); }
+  .inv-sheet[data-template="compact"] .inv-note,
+  .inv-sheet[data-template="compact"] .inv-payment-box{ padding:5px 10px; margin-bottom:10px; border:1px solid #c4c4c4; }
+  .inv-sheet[data-template="compact"] .inv-footer{ margin-top:10px; padding-top:8px; border-top:1px solid #a8a8a8; }
+  .inv-sheet[data-template="compact"] .inv-footer .sig-line{ margin-top:20px; }
+
+  /* لوکس: خط‌های دوبل، عنوان‌های رنگی و جدول سبک */
+  #invoiceSheet[data-template="luxe"]{ border:4px double var(--inv-accent); }
+  .inv-sheet[data-template="luxe"] .inv-header{ border-bottom:1px solid var(--inv-accent); }
+  .inv-sheet[data-template="luxe"] .inv-brand-name{ color:var(--inv-accent); letter-spacing:.3px; }
+  .inv-sheet[data-template="luxe"] .inv-meta .num{ color:var(--inv-accent); }
+  .inv-sheet[data-template="luxe"] .cust-box{ background:transparent; border:none; border-top:1px solid var(--inv-accent); border-bottom:1px solid var(--inv-accent); }
+  .inv-sheet[data-template="luxe"] table.inv-table{ border:none; border-top:2px solid var(--inv-accent); border-bottom:2px solid var(--inv-accent); }
+  .inv-sheet[data-template="luxe"] table.inv-table thead th{ background:transparent; color:var(--inv-accent); border:none; border-bottom:1px solid var(--inv-accent); }
+  .inv-sheet[data-template="luxe"] table.inv-table tbody td{ border:none; border-bottom:1px dotted var(--inv-soft); }
+  .inv-sheet[data-template="luxe"] table.inv-table tbody tr:nth-child(even){ background:transparent; }
+  .inv-sheet[data-template="luxe"] .inv-totals{ border:none; }
+  .inv-sheet[data-template="luxe"] .inv-totals .grand{ border-top:4px double var(--inv-accent); color:var(--inv-accent); }
+  .inv-sheet[data-template="luxe"] .inv-note,
+  .inv-sheet[data-template="luxe"] .inv-payment-box{ border:1px solid var(--inv-soft); background:transparent; }
+  .inv-sheet[data-template="luxe"] .inv-footer{ border-top:1px solid var(--inv-accent); }
+
+  /* شخصی‌سازی بیشتر: اندازهٔ متن، گوشه‌ها، ردیف‌های راه‌راه، اندازهٔ لوگو (بعد از قالب‌ها تا برنده شوند) */
+  .inv-sheet[data-font] table.inv-table tbody td{ font-size:calc(13px * var(--inv-fs, 1)); }
+  .inv-sheet[data-font] table.inv-table thead th{ font-size:calc(11.5px * var(--inv-fs, 1)); }
+  .inv-sheet[data-font] .inv-totals,
+  .inv-sheet[data-font] .inv-totals .grand{ font-size:calc(13px * var(--inv-fs, 1)); }
+  .inv-sheet[data-font] .cust-box .val{ font-size:calc(13px * var(--inv-fs, 1)); }
+  .inv-sheet[data-font] .cust-box .lbl{ font-size:calc(11px * var(--inv-fs, 1)); }
+  .inv-sheet[data-font] .inv-brand-name{ font-size:calc(19px * var(--inv-fs, 1)); }
+  .inv-sheet[data-font] .inv-meta .num{ font-size:calc(16px * var(--inv-fs, 1)); }
+  .inv-sheet[data-font] .inv-note,
+  .inv-sheet[data-font] .inv-payment-box{ font-size:calc(11.5px * var(--inv-fs, 1)); }
+  .inv-sheet[data-font="sm"]{ --inv-fs:.88; }
+  .inv-sheet[data-font="md"]{ --inv-fs:1; }
+  .inv-sheet[data-font="lg"]{ --inv-fs:1.14; }
+  .inv-sheet[data-logo="sm"] .inv-brand img{ width:60px; height:60px; }
+  .inv-sheet[data-logo="lg"] .inv-brand img{ width:130px; height:130px; }
+  .inv-sheet[data-radius="sharp"] .cust-box, .inv-sheet[data-radius="sharp"] .inv-totals,
+  .inv-sheet[data-radius="sharp"] .inv-note, .inv-sheet[data-radius="sharp"] .inv-payment-box,
+  .inv-sheet[data-radius="sharp"][data-template="banner"] .inv-header,
+  .inv-sheet[data-radius="sharp"][data-template="banner"] .inv-totals .grand{ border-radius:0; }
+  .inv-sheet[data-radius="soft"] .cust-box, .inv-sheet[data-radius="soft"] .inv-totals,
+  .inv-sheet[data-radius="soft"] .inv-note, .inv-sheet[data-radius="soft"] .inv-payment-box,
+  .inv-sheet[data-radius="soft"][data-template="banner"] .inv-header,
+  .inv-sheet[data-radius="soft"][data-template="banner"] .inv-totals .grand{ border-radius:6px; }
+  .inv-sheet[data-radius="round"] .cust-box, .inv-sheet[data-radius="round"] .inv-totals,
+  .inv-sheet[data-radius="round"] .inv-note, .inv-sheet[data-radius="round"] .inv-payment-box,
+  .inv-sheet[data-radius="round"][data-template="banner"] .inv-header,
+  .inv-sheet[data-radius="round"][data-template="banner"] .inv-totals .grand{ border-radius:16px; }
+  .inv-sheet[data-zebra="on"] table.inv-table tbody tr:nth-child(even){ background:var(--inv-tint); }
+  .inv-sheet[data-zebra="off"] table.inv-table tbody tr:nth-child(even){ background:transparent; }
+
+  /* فونت متن و فونت عنوان‌ها */
+  .inv-sheet[data-face="system"]{ font-family:Tahoma, 'Segoe UI', system-ui, sans-serif; }
+  .inv-sheet[data-face="naskh"]{ font-family:'Amiri', 'Vazirmatn', serif; }
+  .inv-sheet[data-tface="nastaliq"] .inv-brand-name, .inv-sheet[data-tface="nastaliq"] .inv-meta .num{ font-family:'Noto Nastaliq Urdu', 'Vazirmatn', serif; line-height:1.9; font-weight:700; }
+  .inv-sheet[data-tface="ruqaa"] .inv-brand-name, .inv-sheet[data-tface="ruqaa"] .inv-meta .num{ font-family:'Aref Ruqaa', 'Vazirmatn', serif; font-weight:700; }
+  .inv-sheet[data-tface="bold"] .inv-brand-name, .inv-sheet[data-tface="bold"] .inv-meta .num{ font-family:'Lalezar', 'Vazirmatn', sans-serif; font-weight:400; letter-spacing:.2px; }
+
+  /* جای لوگو (راست/چپ فیزیکی، صرف‌نظر از زبان) */
+  html[dir="rtl"] .inv-sheet[data-logopos="left"] .inv-header,
+  html[dir="ltr"] .inv-sheet[data-logopos="right"] .inv-header,
+  html[dir="rtl"] .inv-sheet[data-logopos="left"] .inv-brand,
+  html[dir="ltr"] .inv-sheet[data-logopos="right"] .inv-brand{ flex-direction:row-reverse; }
+  html[dir="rtl"] .inv-sheet[data-logopos="left"] .inv-meta{ text-align:right; }
+  html[dir="ltr"] .inv-sheet[data-logopos="right"] .inv-meta{ text-align:left; }
+  .inv-sheet[data-logopos="center"] .inv-header{ flex-direction:column; align-items:center; text-align:center; gap:10px; }
+  .inv-sheet[data-logopos="center"] .inv-brand{ flex-direction:column; align-items:center; text-align:center; }
+  .inv-sheet[data-logopos="center"] .inv-brand-ids{ justify-content:center; }
+  .inv-sheet[data-logopos="center"] .inv-meta{ text-align:center; white-space:normal; }
+
+  /* رنگ جدا برای عنوان‌ها و مبلغ نهایی */
+  .inv-sheet[data-tcolor]:not([data-template="banner"]):not([data-template="split"]) .inv-brand-name{ color:var(--inv-title); }
+  .inv-sheet[data-tcolor]:not([data-template="banner"]) .inv-meta .num{ color:var(--inv-title); }
+  .inv-sheet[data-tot] .inv-totals .grand{ color:var(--inv-total); }
+  .inv-sheet[data-tot][data-template="banner"] .inv-totals .grand,
+  .inv-sheet[data-tot][data-template="frame"] .inv-totals .grand{ background:var(--inv-total); color:var(--inv-total-on); }
+
+  .design-sub{ border:1px solid var(--line); border-radius:10px; padding:10px 12px; }
+  .design-sub > summary{ cursor:pointer; font-weight:700; font-size:13px; user-select:none; }
+  .design-sub-body{ display:flex; flex-direction:column; gap:12px; margin-top:12px; }
+  .color-pick-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .color-pick-row input[type=color]{ width:38px; height:34px; padding:0; border:1px solid var(--line); border-radius:8px; background:var(--panel); cursor:pointer; }
+  .color-pick-row .lbl{ font-size:12.5px; color:var(--ink); min-width:110px; }
+  .saved-pal-list{ display:flex; flex-wrap:wrap; gap:8px; }
+  .saved-pal{ display:flex; align-items:center; border:1px solid var(--line); border-radius:100px; overflow:hidden; background:var(--line-soft); }
+  .saved-pal button{ font-family:inherit; border:none; background:none; color:var(--ink); cursor:pointer; font-size:12.5px; padding:6px 10px; display:flex; align-items:center; gap:6px; }
+  .saved-pal button.del{ color:var(--warn); padding:6px 9px; border-inline-start:1px solid var(--line); }
+  .saved-pal .dot{ width:14px; height:14px; border-radius:50%; display:inline-block; border:1px solid rgba(0,0,0,.2); }
+  .design-code-box{ font-family:monospace; font-size:11px; direction:ltr; text-align:left; min-height:70px; }
+
+  .opt-group{ display:flex; flex-direction:column; gap:6px; }
+  .opt-group .status-btn{ min-width:0; flex:1 1 0; padding:8px 6px; font-size:12px; white-space:normal; line-height:1.5; }
+  @media (max-width: 560px){ .opt-group .status-btn-group[data-opt="radius"] .status-btn, .opt-group .status-btn-group[data-opt="zebra"] .status-btn, .opt-group .status-btn-group[data-opt="tface"] .status-btn{ flex:1 1 40%; } }
+  .tint-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .tint-row input[type=color]{ width:38px; height:34px; padding:0; border:1px solid var(--line); border-radius:8px; background:var(--panel); cursor:pointer; }
+  .tint-row .lbl{ font-size:12.5px; color:var(--muted); }
+
+  /* پنل انتخاب قالب و رنگ */
+  .template-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(92px, 1fr)); gap:8px; }
+  .template-card{
+    font-family:inherit; display:flex; flex-direction:column; align-items:center; gap:6px;
+    border:1.5px solid var(--line); background:var(--panel); color:var(--ink); border-radius:10px; padding:8px 4px 6px;
+    cursor:pointer; font-size:12px; font-weight:600;
+  }
+  .template-card:hover{ border-color:var(--ink); }
+  .template-card.active{ border-color:var(--ink); box-shadow:0 0 0 2px var(--ink); }
+  .template-card svg{ width:54px; height:68px; background:#fff; border-radius:4px; border:1px solid #e1e1e1; }
+  .template-card .th-acc{ fill:var(--inv-accent); }
+  .template-card .th-tint{ fill:var(--inv-tint); }
+  .template-card .th-stroke{ stroke:var(--inv-accent); fill:none; }
+  .template-card .th-line{ fill:#d3d3d3; }
+  .palette-grid{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+  .swatch{
+    width:34px; height:34px; border-radius:50%; border:2px solid var(--panel); box-shadow:0 0 0 1.5px var(--line);
+    cursor:pointer; padding:0;
+  }
+  .swatch:hover{ transform:scale(1.08); }
+  .swatch.active{ box-shadow:0 0 0 2.5px var(--ink); }
+  .custom-color-row{ display:flex; align-items:center; gap:10px; font-size:12.5px; color:var(--muted); cursor:pointer; }
+  .custom-color-row input[type=color]{ width:38px; height:34px; padding:0; border:1px solid var(--line); border-radius:8px; background:var(--panel); cursor:pointer; }
+  @media (max-width: 560px){ .swatch{ width:38px; height:38px; } .template-grid{ grid-template-columns:repeat(3, 1fr); } }
+
   /* ---------- کارت پیشنهاد نصب برنامه ---------- */
   /* روی موبایل دکمه‌های شناور بالای صفحه (تاریک/زبان/نصب) روی عنوان اولین پنل نیفتند */
-  @media (max-width: 760px){ .layout{ padding-top:70px; } }
+  .layout{ padding-top:70px; }
 
   .install-card{
     position:fixed; z-index:10000; bottom:14px; left:50%; transform:translateX(-50%);
@@ -537,6 +831,11 @@
   .install-card-msg{ font-size:13px; line-height:1.9; color:var(--muted); }
   .install-card-actions{ display:flex; gap:8px; }
   .install-card-actions .btn{ flex:1; }
+
+  .money-words{ font-size:11.5px; line-height:1.8; color:var(--ok); font-weight:600; overflow-wrap:anywhere; display:none; }
+  .money-words.on{ display:block; }
+  .item-row > .money-words{ margin-top:-2px; }
+  @media (max-width: 560px){ .money-words{ font-size:12.5px; } }
 
   @media print{
     .dark-mode-toggle, .install-card{ display:none !important; }
@@ -589,6 +888,134 @@
           </div>
           <input type="file" id="restoreFileInput" accept="application/json,.json" style="display:none;">
           <div class="hint">بازیابی، فایل پشتیبانی که قبلاً دانلود کرده‌اید را دوباره روی همین یا هر مرورگر/دستگاه دیگری برمی‌گرداند و اطلاعات فعلی را جایگزین می‌کند.</div>
+        </div>
+      </div>
+
+      <div class="panel" id="panelDesign">
+        <h2 onclick="togglePanel('panelDesign')">🎨 ظاهر فاکتور <span class="arrow">▾</span></h2>
+        <div class="panel-body">
+          <div class="field">
+            <label>قالب فاکتور</label>
+            <div class="template-grid" id="templateGrid"></div>
+          </div>
+          <div class="field">
+            <label>رنگ فاکتور</label>
+            <div class="palette-grid" id="paletteGrid"></div>
+            <label class="custom-color-row">
+              <input type="color" id="customAccent" value="#1e3a8a">
+              رنگ دلخواه
+            </label>
+          </div>
+          <div class="field">
+            <label>رنگ پس‌زمینهٔ جعبه‌ها و ردیف‌های راه‌راه</label>
+            <div class="tint-row">
+              <input type="color" id="customTint" value="#eaf0fb">
+              <button type="button" class="btn ghost sm" id="autoTintBtn">خودکار (هم‌رنگ با رنگ اصلی)</button>
+            </div>
+          </div>
+          <div class="field opt-group">
+            <label>گوشه‌های کادرها</label>
+            <div class="status-btn-group" data-opt="radius">
+              <button type="button" class="status-btn" data-value="auto">پیش‌فرض قالب</button>
+              <button type="button" class="status-btn" data-value="sharp">تیز</button>
+              <button type="button" class="status-btn" data-value="soft">ملایم</button>
+              <button type="button" class="status-btn" data-value="round">گرد</button>
+            </div>
+          </div>
+          <div class="field opt-group">
+            <label>اندازهٔ متن فاکتور</label>
+            <div class="status-btn-group" data-opt="font">
+              <button type="button" class="status-btn" data-value="sm">کوچک</button>
+              <button type="button" class="status-btn" data-value="md">معمولی</button>
+              <button type="button" class="status-btn" data-value="lg">بزرگ</button>
+            </div>
+          </div>
+          <div class="field opt-group">
+            <label>ردیف‌های راه‌راه جدول</label>
+            <div class="status-btn-group" data-opt="zebra">
+              <button type="button" class="status-btn" data-value="auto">پیش‌فرض قالب</button>
+              <button type="button" class="status-btn" data-value="on">روشن</button>
+              <button type="button" class="status-btn" data-value="off">خاموش</button>
+            </div>
+          </div>
+          <div class="field opt-group">
+            <label>اندازهٔ لوگو</label>
+            <div class="status-btn-group" data-opt="logo">
+              <button type="button" class="status-btn" data-value="sm">کوچک</button>
+              <button type="button" class="status-btn" data-value="md">معمولی</button>
+              <button type="button" class="status-btn" data-value="lg">بزرگ</button>
+            </div>
+          </div>
+          <details class="design-sub">
+            <summary>🔤 فونت‌ها و جای لوگو</summary>
+            <div class="design-sub-body">
+              <div class="field opt-group">
+                <label>فونت متن فاکتور</label>
+                <div class="status-btn-group" data-opt="face">
+                  <button type="button" class="status-btn" data-value="vazir">وزیرمتن</button>
+                  <button type="button" class="status-btn" data-value="system">ساده (سیستم)</button>
+                  <button type="button" class="status-btn" data-value="naskh">نسخ سنتی</button>
+                </div>
+              </div>
+              <div class="field opt-group">
+                <label>فونت عنوان‌ها (نام شرکت و شماره فاکتور)</label>
+                <div class="status-btn-group" data-opt="tface">
+                  <button type="button" class="status-btn" data-value="same">مثل متن</button>
+                  <button type="button" class="status-btn" data-value="nastaliq">نستعلیق</button>
+                  <button type="button" class="status-btn" data-value="ruqaa">رقعه‌ای</button>
+                  <button type="button" class="status-btn" data-value="bold">ضخیم</button>
+                </div>
+                <div class="hint">فونت‌های نستعلیق، رقعه‌ای و ضخیم از اینترنت بارگذاری می‌شوند؛ اگر آفلاین باشید یا هنوز نیامده باشند، فونت ساده نشان داده می‌شود.</div>
+              </div>
+              <div class="field opt-group">
+                <label>جای لوگو</label>
+                <div class="status-btn-group" data-opt="logoPos">
+                  <button type="button" class="status-btn" data-value="right">راست</button>
+                  <button type="button" class="status-btn" data-value="center">وسط</button>
+                  <button type="button" class="status-btn" data-value="left">چپ</button>
+                </div>
+              </div>
+            </div>
+          </details>
+          <details class="design-sub">
+            <summary>🖍️ رنگ عنوان‌ها و رنگ‌های ذخیره‌شده</summary>
+            <div class="design-sub-body">
+              <div class="color-pick-row">
+                <span class="lbl">رنگ عنوان‌ها</span>
+                <input type="color" id="customTitleColor" value="#111111">
+                <button type="button" class="btn ghost sm" id="autoTitleBtn">خودکار</button>
+              </div>
+              <div class="color-pick-row">
+                <span class="lbl">رنگ مبلغ نهایی</span>
+                <input type="color" id="customTotalColor" value="#111111">
+                <button type="button" class="btn ghost sm" id="autoTotalBtn">خودکار</button>
+              </div>
+              <div class="field">
+                <label for="savedPaletteName">ذخیرهٔ رنگ‌های فعلی با یک نام (مثلاً «رنگ برند ما»)</label>
+                <input type="text" id="savedPaletteName" placeholder="نام مجموعه رنگ">
+                <button type="button" class="btn outline sm" id="savePaletteBtn" style="align-self:flex-start;">💾 ذخیره</button>
+              </div>
+              <div class="saved-pal-list" id="savedPaletteList"></div>
+            </div>
+          </details>
+          <details class="design-sub">
+            <summary>🔁 انتقال ظاهر به دستگاه دیگر</summary>
+            <div class="design-sub-body">
+              <div class="hint">قالب، رنگ‌ها، فونت‌ها و رنگ‌های ذخیره‌شده را به‌صورت فایل یا کد متنی ببرید و روی گوشی یا کامپیوتر دیگر وارد کنید (مثلاً کد را در پیام‌رسان برای خودتان بفرستید).</div>
+              <div class="action-btns">
+                <button type="button" class="btn outline sm" id="exportDesignFileBtn">📤 دانلود فایل ظاهر</button>
+                <button type="button" class="btn outline sm" id="importDesignFileBtn">📥 ورود از فایل</button>
+              </div>
+              <input type="file" id="importDesignFileInput" accept="application/json,.json" style="display:none;">
+              <textarea id="designCodeBox" class="design-code-box" placeholder="کد ظاهر اینجا ساخته می‌شود یا کدی که از دستگاه دیگر دارید را اینجا بچسبانید" spellcheck="false"></textarea>
+              <div class="action-btns">
+                <button type="button" class="btn outline sm" id="makeDesignCodeBtn">📋 ساخت و کپی کد</button>
+                <button type="button" class="btn outline sm" id="applyDesignCodeBtn">✅ اعمال کد</button>
+              </div>
+            </div>
+          </details>
+          <button type="button" class="btn ghost sm" id="resetDesignBtn" style="align-self:flex-start;">↩️ بازنشانی ظاهر به پیش‌فرض</button>
+          <div class="hint">انتخاب شما روی پیش‌نمایش و خروجی PDF اعمال می‌شود، روی همین مرورگر ذخیره می‌ماند و همراه هر فاکتور ثبت‌شده نگه داشته می‌شود.</div>
         </div>
       </div>
 
@@ -885,7 +1312,7 @@
     <!-- ============ PREVIEW COLUMN ============ -->
     <div class="preview-col">
       <div class="sheet-shadow">
-        <div id="invoiceSheet"></div>
+        <div id="invoiceSheet" class="inv-sheet" data-template="classic"></div>
       </div>
     </div>
   </div>
@@ -1012,6 +1439,10 @@
 
   // ================= Bilingual (Persian / English) =================
   const D = [
+  ['🔤 فونت‌ها و جای لوگو','🔤 Fonts & logo position'],['فونت متن فاکتور','Invoice text font'],['وزیرمتن','Vazirmatn'],['ساده (سیستم)','Plain (system)'],['نسخ سنتی','Traditional Naskh'],['فونت عنوان‌ها (نام شرکت و شماره فاکتور)','Heading font (company name & invoice number)'],['مثل متن','Same as text'],['نستعلیق','Nastaliq'],['رقعه‌ای','Ruqaa'],['ضخیم','Bold display'],['فونت‌های نستعلیق، رقعه‌ای و ضخیم از اینترنت بارگذاری می‌شوند؛ اگر آفلاین باشید یا هنوز نیامده باشند، فونت ساده نشان داده می‌شود.','Nastaliq, Ruqaa and Bold fonts are loaded from the internet; if you are offline or they have not loaded yet, a plain font is shown.'],['جای لوگو','Logo position'],['راست','Right'],['وسط','Center'],['چپ','Left'],['🖍️ رنگ عنوان‌ها و رنگ‌های ذخیره‌شده','🖍️ Heading colors & saved colors'],['رنگ عنوان‌ها','Heading color'],['رنگ مبلغ نهایی','Final amount color'],['خودکار','Auto'],['ذخیرهٔ رنگ‌های فعلی با یک نام (مثلاً «رنگ برند ما»)','Save current colors with a name (e.g. "Our brand color")'],['نام مجموعه رنگ','Color set name'],['💾 ذخیره','💾 Save'],['هنوز مجموعه رنگی ذخیره نشده است.','No color set saved yet.'],['حذف','Delete'],['🔁 انتقال ظاهر به دستگاه دیگر','🔁 Move design to another device'],['قالب، رنگ‌ها، فونت‌ها و رنگ‌های ذخیره‌شده را به‌صورت فایل یا کد متنی ببرید و روی گوشی یا کامپیوتر دیگر وارد کنید (مثلاً کد را در پیام‌رسان برای خودتان بفرستید).','Take the template, colors, fonts and saved colors as a file or text code and import them on another phone or computer (e.g. send the code to yourself in a messenger).'],['📤 دانلود فایل ظاهر','📤 Download design file'],['📥 ورود از فایل','📥 Import from file'],['کد ظاهر اینجا ساخته می‌شود یا کدی که از دستگاه دیگر دارید را اینجا بچسبانید','The design code is created here, or paste a code from another device'],['📋 ساخت و کپی کد','📋 Create & copy code'],['✅ اعمال کد','✅ Apply code'],['رنگ‌ها ذخیره شد','Colors saved'],['فایل ظاهر دانلود شد','Design file downloaded'],['ظاهر اعمال شد','Design applied'],['کد ظاهر ساخته و کپی شد','Design code created and copied'],['کد ساخته شد؛ آن را دستی کپی کنید','Code created; copy it manually'],['این فایل ظاهر معتبر نیست.','This design file is not valid.'],['این کد ظاهر معتبر نیست.','This design code is not valid.'],['ظاهر فعلی با ظاهر داخل این فایل جایگزین شود؟ (رنگ‌های ذخیره‌شده با فایل ادغام می‌شوند)','Replace the current design with the one in this file? (Saved colors are merged with the file.)'],
+  ['مرکزی','Centered'],['دوبخشی','Split'],['کارتی','Card'],['قاب‌دار','Framed'],['فشرده','Compact'],['لوکس','Luxe'],
+  ['رنگ پس‌زمینهٔ جعبه‌ها و ردیف‌های راه‌راه','Box background & striped-row color'],['خودکار (هم‌رنگ با رنگ اصلی)','Auto (match main color)'],['گوشه‌های کادرها','Box corners'],['پیش‌فرض قالب','Template default'],['تیز','Sharp'],['ملایم','Soft'],['گرد','Round'],['اندازهٔ متن فاکتور','Invoice text size'],['کوچک','Small'],['معمولی','Normal'],['بزرگ','Large'],['ردیف‌های راه‌راه جدول','Striped table rows'],['روشن','On'],['خاموش','Off'],['اندازهٔ لوگو','Logo size'],['↩️ بازنشانی ظاهر به پیش‌فرض','↩️ Reset design to default'],['سرمه‌ای تیره','Dark navy'],['نیلی','Indigo'],['آبی دریایی','Ocean blue'],['سبز جنگلی','Forest green'],['زیتونی','Olive'],['صورتی','Pink'],['شرابی','Burgundy'],['کهربایی','Amber'],['طلایی','Gold'],['گرافیتی','Graphite'],
+  ['🎨 ظاهر فاکتور','🎨 Invoice design'],['قالب فاکتور','Invoice template'],['رنگ فاکتور','Invoice color'],['رنگ دلخواه','Custom color'],['انتخاب شما روی پیش‌نمایش و خروجی PDF اعمال می‌شود، روی همین مرورگر ذخیره می‌ماند و همراه هر فاکتور ثبت‌شده نگه داشته می‌شود.','Your choice applies to the preview and the PDF output, is saved in this browser and is kept with each saved invoice.'],['کلاسیک','Classic'],['مدرن','Modern'],['مینیمال','Minimal'],['نواری','Banner'],['رسمی','Formal'],['مشکی','Black'],['آبی نفتی','Navy'],['آبی آسمانی','Sky blue'],['زمردی','Emerald'],['فیروزه‌ای','Teal'],['بنفش','Purple'],['زرشکی','Crimson'],['نارنجی','Orange'],['قهوه‌ای','Brown'],['طوسی','Slate'],
   ['برنامه نصب شد','App installed'],
   ['📲 نصب برنامه','📲 Install the app'],['این ابزار را مثل یک برنامه روی گوشی یا کامپیوتر نصب کنید: با یک آیکن روی صفحهٔ اصلی باز می‌شود، تمام‌صفحه است و بدون اینترنت هم کار می‌کند.','Install this tool like an app on your phone or computer: it opens from an icon on your home screen, runs full-screen and works offline.'],['در سافاری روی دکمهٔ اشتراک‌گذاری (مربع با فلش رو به بالا) بزنید و گزینهٔ «Add to Home Screen» (افزودن به صفحهٔ اصلی) را انتخاب کنید.','In Safari, tap the Share button (square with an up arrow) and choose "Add to Home Screen".'],['از منوی مرورگر (سه‌نقطه یا اشتراک‌گذاری) گزینهٔ «Install app» (نصب برنامه) یا «Add to Home screen» را بزنید. اگر این گزینه را نمی‌بینید، صفحه را با Chrome یا Edge باز کنید.','From the browser menu (three dots or Share) choose "Install app" or "Add to Home screen". If you do not see it, open this page in Chrome or Edge.'],['نصب','Install'],['بعداً','Later'],['متوجه شدم','Got it'],['نصب برنامه','Install app'],
   ['شماره اقتصادی','Economic ID'],['کد پستی','Postal code'],['شناسه ملی','National ID'],
@@ -1103,6 +1534,7 @@
   const EX = new Map(), PF = [];
   D.forEach(([fa, en]) => { if(fa.endsWith('~')) PF.push([nk(fa.slice(0,-1)), en]); else EX.set(nk(fa), en); });
   const RX = [
+    [/^«(.+)» از رنگ‌های ذخیره‌شده حذف شود؟$/, 'Delete "$1" from saved colors?'],
     [/ — فاکتور (\S+)$/, ' — Invoice $1'],
     [/فاکتور شماره (.*)/, 'Invoice No. $1'], [/^تاریخ: /, 'Date: '], [/^فاکتور (\S+) — /, 'Invoice $1 — '],
     [/(\d+) فاکتور ثبت.?شده/, '$1 invoices saved'], [/^(\d+) فاکتور$/, '$1 invoice(s)'], [/^(\d+) روز معوق/, '$1 days overdue'],
@@ -1160,11 +1592,78 @@
     if(!d) return '';
     return d.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   }
-  function moneyInput(input){
+  // ---------- مبلغ به حروف (فارسی / انگلیسی) ----------
+  const FA_ONES = ['','یک','دو','سه','چهار','پنج','شش','هفت','هشت','نه','ده','یازده','دوازده','سیزده','چهارده','پانزده','شانزده','هفده','هجده','نوزده'];
+  const FA_TENS = ['','','بیست','سی','چهل','پنجاه','شصت','هفتاد','هشتاد','نود'];
+  const FA_HUND = ['','صد','دویست','سیصد','چهارصد','پانصد','ششصد','هفتصد','هشتصد','نهصد'];
+  const FA_SCALE = ['','هزار','میلیون','میلیارد','تریلیون','کوادریلیون','کوینتیلیون'];
+  const EN_ONES = ['','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+  const EN_TENS = ['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+  const EN_SCALE = ['','thousand','million','billion','trillion','quadrillion','quintillion'];
+  function group3Fa(n){
+    const h = Math.floor(n / 100), r = n % 100, parts = [];
+    if(h) parts.push(FA_HUND[h]);
+    if(r){
+      if(r < 20) parts.push(FA_ONES[r]);
+      else { parts.push(FA_TENS[Math.floor(r / 10)]); if(r % 10) parts.push(FA_ONES[r % 10]); }
+    }
+    return parts.join(' و ');
+  }
+  function group3En(n){
+    const h = Math.floor(n / 100), r = n % 100, out = [];
+    if(h) out.push(EN_ONES[h] + ' hundred');
+    if(r){
+      if(r < 20) out.push(EN_ONES[r]);
+      else out.push(EN_TENS[Math.floor(r / 10)] + (r % 10 ? '-' + EN_ONES[r % 10] : ''));
+    }
+    return out.join(' ');
+  }
+  // digits: رشتهٔ ارقام انگلیسی؛ خروجی رشتهٔ حروف یا '' (اگر صفر/خالی/خیلی بزرگ بود)
+  function numberToWords(digits, lang){
+    digits = String(digits || '').replace(/^0+/, '');
+    if(!digits || digits.length > 21) return '';
+    const groups = [];
+    for(let i = digits.length; i > 0; i -= 3) groups.unshift(parseInt(digits.slice(Math.max(0, i - 3), i), 10));
+    const out = [];
+    groups.forEach((g, idx) => {
+      if(!g) return;
+      const scaleIdx = groups.length - 1 - idx;
+      if(lang === 'en') out.push(group3En(g) + (scaleIdx ? ' ' + EN_SCALE[scaleIdx] : ''));
+      else if(scaleIdx === 1 && g === 1) out.push('هزار');
+      else out.push(group3Fa(g) + (scaleIdx ? ' ' + FA_SCALE[scaleIdx] : ''));
+    });
+    return lang === 'en' ? out.join(', ') : out.join(' و ');
+  }
+  function moneyWordsText(rawValue){
+    const digits = normalizeDigits(rawValue);
+    const w = numberToWords(digits, LANG === 'en' ? 'en' : 'fa');
+    if(!w) return '';
+    return LANG === 'en' ? (w.charAt(0).toUpperCase() + w.slice(1) + ' Rials') : (w + ' ریال');
+  }
+  function updateMoneyWords(input){
+    const box = input._wordsEl;
+    if(!box) return;
+    const txt = moneyWordsText(input.value);
+    box.textContent = txt;
+    box.classList.toggle('on', !!txt);
+  }
+  function refreshAllMoneyWords(){
+    document.querySelectorAll('input[data-money-words]').forEach(updateMoneyWords);
+  }
+  function moneyInput(input, wordsEl){
+    if(!wordsEl){
+      wordsEl = document.createElement('div');
+      wordsEl.className = 'money-words';
+      input.insertAdjacentElement('afterend', wordsEl);
+    }
+    input._wordsEl = wordsEl;
+    input.setAttribute('data-money-words', '1');
     input.addEventListener('input', () => {
       const grouped = groupThousands(input.value);
       if(grouped !== input.value) input.value = grouped;
+      updateMoneyWords(input);
     });
+    updateMoneyWords(input);
   }
 
   // ---------- live grouping for card number (16 digits, grouped by 4 with dashes) ----------
@@ -1828,7 +2327,12 @@
     `;
     el('itemsWrap').appendChild(wrap);
     wrap.querySelector('.remove-btn').addEventListener('click', () => { wrap.remove(); renderPreview(); });
-    moneyInput(wrap.querySelector('.it-price'));
+    {
+      const wordsBox = document.createElement('div');
+      wordsBox.className = 'money-words';
+      wrap.querySelector('.item-row-main').insertAdjacentElement('afterend', wordsBox);
+      moneyInput(wrap.querySelector('.it-price'), wordsBox);
+    }
     decimalQtyInput(wrap.querySelector('.it-qty'));
     const taxToggle = wrap.querySelector('.it-tax-toggle');
     const taxInput = wrap.querySelector('.it-tax-percent');
@@ -1899,8 +2403,6 @@
   ['companyEconomicId','companyNationalId','companyPostalCode','custPhone','custEconomicId','custNationalId','custPostalCode','taxPercent','invNumber','overdueDays'].forEach(id => digitsOnly(el(id)));
   moneyInput(el('discount'));
   moneyInput(el('netProfit'));
-  cardNumberInput(el('companyCardNumber'));
-
   function decimalQtyInput(input){
     input.addEventListener('input', () => {
       let v = toEnglishDigitsKeepOthers(input.value);
@@ -2050,6 +2552,8 @@
         <div class="sig">امضا/مهر مشتری<div class="sig-line"></div></div>
       </div>
     `;
+
+    refreshAllMoneyWords();
 
     // mini totals in the sticky action bar
     el('totalsMini').innerHTML = `
@@ -2396,6 +2900,7 @@
       custPostalCode: el('custPostalCode').value.trim(),
       alwaysShowCustIds: el('alwaysShowCustIds').checked,
       items: readItems(),
+      design: Object.assign({}, window.__invDesign ? window.__invDesign() : {}),
       discount: normalizeDigits(el('discount').value),
       taxPercent: el('taxPercent').value.trim(),
       note: el('note').value.trim(),
@@ -2942,6 +3447,7 @@
     el('invDate').value = record.invDate || '';
     el('paidStatus').value = record.paidStatus || '';
     syncPaidStatusButtons();
+    if(record.design && window.__invSetDesign) window.__invSetDesign(record.design);
     setSelectedCategories(categoriesOf(record));
     renderCategoryButtons();
     el('custName').value = record.custName || '';
@@ -3129,7 +3635,7 @@
     ['invDate', 'reportFrom', 'reportTo'].forEach(id => { const v = el(id).value; el(id).value = en ? toLatin(v) : toFa(toLatin(v)); });
     renderPreview(); renderRecordsList(el('recordSearch').value); renderReport(); renderOverdueList(); renderServiceReminders();
     renderCustomerProfile(); renderTrashList(); renderInvNumberHint(); renderCategoryButtons(); renderCategoryFilterButtons();
-    renderCategoryManagerList(); renderPresetManagerList(); updateServiceReminderPreview(); updatePdfNamePreview();
+    renderCategoryManagerList(); renderPresetManagerList(); updateServiceReminderPreview(); updatePdfNamePreview(); refreshAllMoneyWords();
   }
   el('langToggle').addEventListener('click', () => {
     LANG = LANG === 'en' ? 'fa' : 'en';
@@ -3143,14 +3649,301 @@
     const sheet = el('invoiceSheet');
     const wrap = sheet.parentElement;
     const DESIGN_W = 640;
-    if(window.innerWidth > 760){ sheet.style.removeProperty('--screen-scale'); return; }
+    const wide = window.innerWidth > 760;
+    sheet.classList.remove('fit-scaled'); wrap.classList.remove('fit-scaled-wrap');
+    sheet.style.removeProperty('--screen-scale');
     const avail = wrap.clientWidth;
+    if(wide){
+      if(avail >= DESIGN_W) return; // جا کافی است؛ همان چیدمان معمولی
+      sheet.classList.add('fit-scaled'); wrap.classList.add('fit-scaled-wrap');
+    }
     sheet.style.setProperty('--screen-scale', avail < DESIGN_W ? (avail / DESIGN_W).toFixed(4) : '1');
   }
   window.addEventListener('resize', fitSheetToScreen);
   window.addEventListener('orientationchange', () => setTimeout(fitSheetToScreen, 200));
   el('langToggle').addEventListener('click', () => setTimeout(fitSheetToScreen, 0));
   fitSheetToScreen();
+
+  // ---------- قالب و پالت فاکتور ----------
+  const PALETTES = [
+    { id:'black',  name:'مشکی',      accent:'#111111', tint:'#f2f2f2' },
+    { id:'navy',   name:'آبی نفتی',  accent:'#1e3a8a', tint:'#eaf0fb' },
+    { id:'sky',    name:'آبی آسمانی', accent:'#0369a1', tint:'#e6f3fa' },
+    { id:'emerald',name:'زمردی',     accent:'#047857', tint:'#e6f5ef' },
+    { id:'teal',   name:'فیروزه‌ای',  accent:'#0f766e', tint:'#e3f4f2' },
+    { id:'purple', name:'بنفش',      accent:'#6d28d9', tint:'#f0eafc' },
+    { id:'crimson',name:'زرشکی',     accent:'#9f1239', tint:'#fbe9ee' },
+    { id:'orange', name:'نارنجی',    accent:'#c2410c', tint:'#fdeee4' },
+    { id:'brown',  name:'قهوه‌ای',    accent:'#92400e', tint:'#f8efe3' },
+    { id:'slate',  name:'طوسی',      accent:'#475569', tint:'#eef1f4' },
+    { id:'ink',    name:'سرمه‌ای تیره', accent:'#0f172a', tint:'#e9edf3' },
+    { id:'indigo', name:'نیلی',       accent:'#4338ca', tint:'#ecebfb' },
+    { id:'cyan',   name:'آبی دریایی',  accent:'#0e7490', tint:'#e2f3f7' },
+    { id:'forest', name:'سبز جنگلی',  accent:'#14532d', tint:'#e5f1e9' },
+    { id:'olive',  name:'زیتونی',     accent:'#4d7c0f', tint:'#eef5e1' },
+    { id:'rose',   name:'صورتی',      accent:'#be185d', tint:'#fbe7f0' },
+    { id:'wine',   name:'شرابی',      accent:'#7f1d1d', tint:'#f6e7e7' },
+    { id:'amber',  name:'کهربایی',    accent:'#b45309', tint:'#fbefdc' },
+    { id:'gold',   name:'طلایی',      accent:'#a16207', tint:'#f8f0d9' },
+    { id:'graphite',name:'گرافیتی',   accent:'#374151', tint:'#eceef1' },
+  ];
+  const TEMPLATES = [
+    { id:'classic', name:'کلاسیک' },
+    { id:'modern',  name:'مدرن' },
+    { id:'minimal', name:'مینیمال' },
+    { id:'banner',  name:'نواری' },
+    { id:'formal',  name:'رسمی' },
+    { id:'centered',name:'مرکزی' },
+    { id:'split',   name:'دوبخشی' },
+    { id:'card',    name:'کارتی' },
+    { id:'frame',   name:'قاب‌دار' },
+    { id:'compact', name:'فشرده' },
+    { id:'luxe',    name:'لوکس' },
+  ];
+  const TEMPLATE_THUMBS = {
+    classic: '<rect x="2" y="2" width="50" height="64" class="th-stroke" stroke-width="1.5"/><rect x="6" y="6" width="20" height="4" class="th-line"/><rect x="6" y="13" width="42" height="9" class="th-stroke" stroke-width="1"/><rect x="6" y="26" width="42" height="6" class="th-acc"/><rect x="6" y="35" width="42" height="2" class="th-line"/><rect x="6" y="40" width="42" height="2" class="th-line"/><rect x="26" y="49" width="22" height="10" class="th-stroke" stroke-width="1"/>',
+    modern:  '<rect x="0" y="0" width="54" height="5" class="th-acc"/><rect x="6" y="10" width="20" height="4" class="th-acc" opacity=".8"/><rect x="6" y="18" width="42" height="9" rx="3" class="th-tint"/><rect x="6" y="31" width="42" height="6" rx="1.5" class="th-acc"/><rect x="6" y="40" width="42" height="1.5" class="th-line"/><rect x="6" y="45" width="42" height="1.5" class="th-line"/><rect x="24" y="52" width="24" height="10" rx="3" class="th-tint"/>',
+    minimal: '<rect x="6" y="8" width="20" height="3" class="th-line"/><rect x="6" y="15" width="42" height="1" class="th-line"/><rect x="6" y="19" width="42" height="9" fill="none"/><rect x="6" y="30" width="42" height="1.5" class="th-acc"/><rect x="6" y="36" width="42" height="1" class="th-line"/><rect x="6" y="42" width="42" height="1" class="th-line"/><rect x="28" y="52" width="20" height="2" class="th-acc"/>',
+    banner:  '<rect x="4" y="4" width="46" height="12" rx="3" class="th-acc"/><rect x="4" y="20" width="46" height="9" rx="2" class="th-tint"/><rect x="46" y="20" width="4" height="9" class="th-acc"/><rect x="4" y="33" width="46" height="5" class="th-acc"/><rect x="4" y="41" width="46" height="4" class="th-tint"/><rect x="4" y="49" width="46" height="2" class="th-line"/><rect x="22" y="55" width="28" height="9" rx="3" class="th-acc"/>',
+    formal:  '<rect x="2" y="2" width="50" height="64" class="th-stroke" stroke-width="1"/><rect x="5" y="5" width="44" height="58" class="th-stroke" stroke-width="1"/><rect x="9" y="9" width="20" height="3" class="th-line"/><rect x="9" y="16" width="36" height="8" class="th-stroke" stroke-width=".8"/><rect x="9" y="28" width="36" height="6" class="th-tint"/><rect x="9" y="28" width="36" height="6" class="th-stroke" stroke-width=".8"/><rect x="9" y="37" width="36" height="12" class="th-stroke" stroke-width=".8"/><rect x="28" y="52" width="17" height="7" class="th-tint"/>',
+  };
+  Object.assign(TEMPLATE_THUMBS, {
+    centered:'<rect x="0" y="0" width="54" height="3" class="th-acc"/><rect x="0" y="65" width="54" height="3" class="th-acc"/><rect x="17" y="8" width="20" height="4" class="th-acc" opacity=".85"/><rect x="12" y="15" width="30" height="2" class="th-line"/><rect x="6" y="20" width="42" height="1" class="th-acc"/><rect x="6" y="24" width="42" height="8" rx="2" class="th-tint"/><rect x="6" y="36" width="42" height="6" class="th-acc"/><rect x="6" y="45" width="42" height="1.5" class="th-line"/><rect x="6" y="50" width="42" height="1.5" class="th-line"/><rect x="6" y="56" width="42" height="1.5" class="th-acc"/>',
+    split:   '<rect x="4" y="4" width="28" height="13" rx="2" class="th-acc"/><rect x="32" y="4" width="18" height="13" rx="2" class="th-tint"/><rect x="4" y="21" width="46" height="9" rx="2" class="th-stroke" stroke-width="1"/><rect x="4" y="34" width="46" height="5" class="th-acc"/><rect x="4" y="41" width="46" height="4" class="th-tint"/><rect x="4" y="48" width="46" height="2" class="th-line"/><rect x="26" y="55" width="24" height="9" rx="2" class="th-stroke" stroke-width="1"/>',
+    card:    '<rect x="0" y="0" width="54" height="68" class="th-tint"/><rect x="4" y="4" width="46" height="12" rx="3" fill="#fff"/><rect x="44" y="4" width="6" height="12" rx="2" class="th-acc"/><rect x="4" y="20" width="46" height="9" rx="3" fill="#fff"/><rect x="4" y="33" width="46" height="22" rx="3" fill="#fff"/><rect x="4" y="33" width="46" height="5" class="th-acc"/><rect x="26" y="58" width="24" height="7" rx="3" fill="#fff"/>',
+    frame:   '<rect x="2" y="2" width="50" height="64" class="th-stroke" stroke-width="4"/><rect x="7" y="7" width="40" height="54" class="th-stroke" stroke-width=".6"/><rect x="10" y="11" width="18" height="3" class="th-acc"/><rect x="10" y="18" width="34" height="8" class="th-stroke" stroke-width=".8"/><rect x="10" y="30" width="34" height="5" class="th-acc"/><rect x="10" y="38" width="34" height="2" class="th-line"/><rect x="10" y="43" width="34" height="2" class="th-line"/><rect x="26" y="49" width="18" height="7" class="th-acc"/>',
+    compact: '<rect x="3" y="3" width="48" height="62" class="th-stroke" stroke-width=".8"/><rect x="7" y="7" width="16" height="3" class="th-acc" opacity=".85"/><rect x="7" y="12" width="40" height="1" class="th-acc"/><rect x="7" y="15" width="40" height="6" class="th-stroke" stroke-width=".6"/><rect x="7" y="24" width="40" height="1.2" class="th-acc"/><rect x="7" y="27" width="40" height="1" class="th-line"/><rect x="7" y="30" width="40" height="1" class="th-line"/><rect x="7" y="33" width="40" height="1" class="th-line"/><rect x="7" y="36" width="40" height="1" class="th-line"/><rect x="7" y="39" width="40" height="1" class="th-line"/><rect x="7" y="42" width="40" height="1" class="th-line"/><rect x="28" y="48" width="19" height="7" class="th-stroke" stroke-width=".6"/>',
+    luxe:    '<rect x="2" y="2" width="50" height="64" class="th-stroke" stroke-width="1"/><rect x="4" y="4" width="46" height="60" class="th-stroke" stroke-width=".6"/><rect x="9" y="9" width="18" height="3" class="th-acc" opacity=".85"/><rect x="9" y="15" width="36" height="1" class="th-acc"/><rect x="9" y="19" width="36" height="1" class="th-acc"/><rect x="9" y="30" width="36" height="1.4" class="th-acc"/><rect x="9" y="34" width="36" height="1" class="th-line"/><rect x="9" y="39" width="36" height="1" class="th-line"/><rect x="9" y="44" width="36" height="1.4" class="th-acc"/><rect x="28" y="50" width="17" height="1" class="th-acc"/><rect x="28" y="53" width="17" height="1" class="th-acc"/>',
+  });
+  const DEFAULT_DESIGN = { template:'classic', palette:'black', custom:'#1e3a8a', tint:'', radius:'auto', font:'md', zebra:'auto', logo:'md', face:'vazir', tface:'same', logoPos:'right', titleColor:'', totalColor:'' };
+  let design = Object.assign({}, DEFAULT_DESIGN);
+  try{ const saved = JSON.parse(storage.get('inv_design') || 'null'); if(saved && typeof saved === 'object') design = Object.assign({}, DEFAULT_DESIGN, saved); }catch(e){}
+
+  function hexToRgb(hex){
+    const m = /^#?([0-9a-f]{6})$/i.exec(hex || ''); if(!m) return [17,17,17];
+    const n = parseInt(m[1], 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
+  function rgbToHex(r, g, b){ return '#' + [r, g, b].map(v => Math.round(v).toString(16).padStart(2, '0')).join(''); }
+  function colorsForDesign(d){
+    if(d.palette === 'custom'){
+      const [r, g, b] = hexToRgb(d.custom);
+      const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      return { accent: rgbToHex(r, g, b), tint: rgbToHex(r + (255 - r) * 0.9, g + (255 - g) * 0.9, b + (255 - b) * 0.9), on: lum > 0.6 ? '#111111' : '#ffffff' };
+    }
+    const pal = PALETTES.find(p => p.id === d.palette) || PALETTES[0];
+    const [r, g, b] = hexToRgb(pal.accent);
+    const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return { accent: pal.accent, tint: pal.tint, on: lum > 0.6 ? '#111111' : '#ffffff' };
+  }
+  function applyDesign(){
+    const c = colorsForDesign(design);
+    const sheet = el('invoiceSheet');
+    sheet.setAttribute('data-template', TEMPLATES.some(t => t.id === design.template) ? design.template : 'classic');
+    sheet.style.setProperty('--inv-accent', c.accent);
+    const tintFinal = /^#[0-9a-f]{6}$/i.test(design.tint || '') ? design.tint : c.tint;
+    sheet.style.setProperty('--inv-tint', tintFinal);
+    sheet.style.setProperty('--inv-on', c.on);
+    sheet.setAttribute('data-font', design.font || 'md');
+    sheet.setAttribute('data-logo', design.logo || 'md');
+    ['radius', 'zebra'].forEach(k => { if(design[k] && design[k] !== 'auto') sheet.setAttribute('data-' + k, design[k]); else sheet.removeAttribute('data-' + k); });
+    document.querySelectorAll('.opt-group [data-opt]').forEach(g => {
+      const cur = design[g.getAttribute('data-opt')];
+      g.querySelectorAll('.status-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-value') === cur));
+    });
+    el('customTint').value = tintFinal;
+    sheet.setAttribute('data-face', design.face || 'vazir');
+    sheet.setAttribute('data-tface', design.tface || 'same');
+    sheet.setAttribute('data-logopos', design.logoPos || 'right');
+    const isHex = (v) => /^#[0-9a-f]{6}$/i.test(v || '');
+    const onFor = (hex) => { const [r, g, b] = hexToRgb(hex); return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.6 ? '#111111' : '#ffffff'; };
+    if(isHex(design.titleColor)){ sheet.setAttribute('data-tcolor', '1'); sheet.style.setProperty('--inv-title', design.titleColor); }
+    else { sheet.removeAttribute('data-tcolor'); sheet.style.removeProperty('--inv-title'); }
+    if(isHex(design.totalColor)){ sheet.setAttribute('data-tot', '1'); sheet.style.setProperty('--inv-total', design.totalColor); sheet.style.setProperty('--inv-total-on', onFor(design.totalColor)); }
+    else { sheet.removeAttribute('data-tot'); sheet.style.removeProperty('--inv-total'); sheet.style.removeProperty('--inv-total-on'); }
+    el('customTitleColor').value = isHex(design.titleColor) ? design.titleColor : c.accent;
+    el('customTotalColor').value = isHex(design.totalColor) ? design.totalColor : c.accent;
+    const grid = el('templateGrid'), pg = el('paletteGrid');
+    grid.style.setProperty('--inv-accent', c.accent); grid.style.setProperty('--inv-tint', tintFinal);
+    grid.querySelectorAll('.template-card').forEach(b => b.classList.toggle('active', b.getAttribute('data-template') === sheet.getAttribute('data-template')));
+    pg.querySelectorAll('.swatch').forEach(b => b.classList.toggle('active', b.getAttribute('data-palette') === design.palette));
+    el('customAccent').value = design.palette === 'custom' ? c.accent : (design.custom || '#1e3a8a');
+  }
+  function setDesign(next, persist){
+    design = Object.assign({}, design, next);
+    if(persist !== false) storage.set('inv_design', JSON.stringify(design));
+    applyDesign();
+  }
+  function buildDesignPanel(){
+    el('templateGrid').innerHTML = TEMPLATES.map(t => `
+      <button type="button" class="template-card" data-template="${t.id}">
+        <svg viewBox="0 0 54 68" aria-hidden="true">${TEMPLATE_THUMBS[t.id]}</svg>
+        <span>${t.name}</span>
+      </button>`).join('');
+    el('paletteGrid').innerHTML = PALETTES.map(p =>
+      `<button type="button" class="swatch" data-palette="${p.id}" style="background:${p.accent};" title="${p.name}"></button>`).join('');
+  }
+  window.__invDesign = () => design;
+  window.__invSetDesign = (d) => setDesign(d);
+  buildDesignPanel();
+  el('templateGrid').addEventListener('click', (e) => {
+    const b = e.target.closest('.template-card'); if(!b) return;
+    setDesign({ template: b.getAttribute('data-template') });
+  });
+  el('paletteGrid').addEventListener('click', (e) => {
+    const b = e.target.closest('.swatch'); if(!b) return;
+    setDesign({ palette: b.getAttribute('data-palette') });
+  });
+  el('customAccent').addEventListener('input', () => setDesign({ palette: 'custom', custom: el('customAccent').value }));
+  el('customTint').addEventListener('input', () => setDesign({ tint: el('customTint').value }));
+  el('autoTintBtn').addEventListener('click', () => setDesign({ tint: '' }));
+  document.querySelectorAll('.opt-group [data-opt]').forEach(g => g.addEventListener('click', (e) => {
+    const b = e.target.closest('.status-btn'); if(!b) return;
+    setDesign({ [g.getAttribute('data-opt')]: b.getAttribute('data-value') });
+  }));
+  el('resetDesignBtn').addEventListener('click', () => setDesign(Object.assign({}, DEFAULT_DESIGN)));
+  // ---------- رنگ عنوان‌ها / مبلغ نهایی ----------
+  el('customTitleColor').addEventListener('input', () => setDesign({ titleColor: el('customTitleColor').value }));
+  el('autoTitleBtn').addEventListener('click', () => setDesign({ titleColor: '' }));
+  el('customTotalColor').addEventListener('input', () => setDesign({ totalColor: el('customTotalColor').value }));
+  el('autoTotalBtn').addEventListener('click', () => setDesign({ totalColor: '' }));
+
+  // ---------- اعتبارسنجی ظاهر (برای فایل/کد واردشده و دادهٔ ذخیره‌شده) ----------
+  const HEX_RE = /^#[0-9a-f]{6}$/i;
+  const ALLOWED = {
+    radius:['auto','sharp','soft','round'], font:['sm','md','lg'], zebra:['auto','on','off'], logo:['sm','md','lg'],
+    face:['vazir','system','naskh'], tface:['same','nastaliq','ruqaa','bold'], logoPos:['right','center','left'],
+  };
+  function sanitizeDesign(d){
+    const out = {};
+    if(!d || typeof d !== 'object') return out;
+    if(TEMPLATES.some(t => t.id === d.template)) out.template = d.template;
+    if(d.palette === 'custom' || PALETTES.some(p => p.id === d.palette)) out.palette = d.palette;
+    ['custom', 'tint', 'titleColor', 'totalColor'].forEach(k => {
+      if(typeof d[k] === 'string' && (HEX_RE.test(d[k]) || (d[k] === '' && k !== 'custom'))) out[k] = d[k];
+    });
+    Object.keys(ALLOWED).forEach(k => { if(ALLOWED[k].includes(d[k])) out[k] = d[k]; });
+    return out;
+  }
+  function sanitizePalette(p){
+    if(!p || typeof p !== 'object') return null;
+    const name = String(p.name || '').trim().slice(0, 40);
+    if(!name || !HEX_RE.test(p.accent || '') || !HEX_RE.test(p.tint || '')) return null;
+    return { name, accent: p.accent, tint: p.tint, title: HEX_RE.test(p.title || '') ? p.title : '', total: HEX_RE.test(p.total || '') ? p.total : '' };
+  }
+  function loadSavedPalettes(){
+    try{
+      const arr = JSON.parse(storage.get('inv_saved_palettes') || '[]');
+      return Array.isArray(arr) ? arr.map(sanitizePalette).filter(Boolean).slice(0, 50) : [];
+    }catch(e){ return []; }
+  }
+  function saveSavedPalettes(arr){ storage.set('inv_saved_palettes', JSON.stringify(arr.slice(0, 50))); }
+
+  function renderSavedPalettes(){
+    const list = loadSavedPalettes();
+    const box = el('savedPaletteList');
+    if(!list.length){ box.innerHTML = '<div class="hint">هنوز مجموعه رنگی ذخیره نشده است.</div>'; return; }
+    box.innerHTML = list.map((p, i) => `
+      <span class="saved-pal">
+        <button type="button" data-apply="${i}"><i class="dot" style="background:${p.accent};"></i>${escapeHtml(p.name)}</button>
+        <button type="button" class="del" data-del="${i}" title="حذف">✕</button>
+      </span>`).join('');
+  }
+  el('savePaletteBtn').addEventListener('click', () => {
+    const list = loadSavedPalettes();
+    let name = el('savedPaletteName').value.trim().slice(0, 40);
+    if(!name) name = (LANG === 'en' ? 'My colors ' : 'رنگ من ') + toFa(list.length + 1);
+    const c = colorsForDesign(design);
+    const tint = HEX_RE.test(design.tint || '') ? design.tint : c.tint;
+    const entry = { name, accent: c.accent, tint, title: HEX_RE.test(design.titleColor || '') ? design.titleColor : '', total: HEX_RE.test(design.totalColor || '') ? design.totalColor : '' };
+    const idx = list.findIndex(p => p.name === name);
+    if(idx > -1) list[idx] = entry; else list.push(entry);
+    saveSavedPalettes(list);
+    el('savedPaletteName').value = '';
+    renderSavedPalettes();
+    showToast('رنگ‌ها ذخیره شد');
+  });
+  el('savedPaletteList').addEventListener('click', (e) => {
+    const list = loadSavedPalettes();
+    const del = e.target.closest('[data-del]');
+    if(del){
+      const i = Number(del.getAttribute('data-del'));
+      if(!list[i]) return;
+      if(!confirm('«' + list[i].name + '» از رنگ‌های ذخیره‌شده حذف شود؟')) return;
+      list.splice(i, 1); saveSavedPalettes(list); renderSavedPalettes();
+      return;
+    }
+    const ap = e.target.closest('[data-apply]');
+    if(ap){
+      const p = list[Number(ap.getAttribute('data-apply'))];
+      if(p) setDesign({ palette: 'custom', custom: p.accent, tint: p.tint, titleColor: p.title || '', totalColor: p.total || '' });
+    }
+  });
+  renderSavedPalettes();
+
+  // ---------- انتقال ظاهر: فایل و کد متنی ----------
+  function designBundle(){ return { app: 'invoice-design', version: 1, design: sanitizeDesign(design), palettes: loadSavedPalettes() }; }
+  function bundleToCode(b){ return 'FDS1:' + btoa(unescape(encodeURIComponent(JSON.stringify(b)))); }
+  function parseBundle(text){
+    text = String(text || '').trim();
+    if(!text) throw new Error('empty');
+    let json = text;
+    if(text.startsWith('FDS1:')) json = decodeURIComponent(escape(atob(text.slice(5).replace(/\s+/g, ''))));
+    const obj = JSON.parse(json);
+    if(!obj || typeof obj !== 'object' || (obj.app && obj.app !== 'invoice-design')) throw new Error('bad');
+    return obj;
+  }
+  function applyBundle(obj){
+    const d = sanitizeDesign(obj.design);
+    const incoming = (Array.isArray(obj.palettes) ? obj.palettes : []).map(sanitizePalette).filter(Boolean);
+    if(!Object.keys(d).length && !incoming.length) throw new Error('nothing');
+    const list = loadSavedPalettes();
+    incoming.forEach(p => { const i = list.findIndex(x => x.name === p.name); if(i > -1) list[i] = p; else list.push(p); });
+    saveSavedPalettes(list);
+    renderSavedPalettes();
+    if(Object.keys(d).length) setDesign(Object.assign({}, DEFAULT_DESIGN, d));
+  }
+  el('exportDesignFileBtn').addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify(designBundle(), null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'invoice-design.json';
+    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    showToast('فایل ظاهر دانلود شد');
+  });
+  el('importDesignFileBtn').addEventListener('click', () => el('importDesignFileInput').click());
+  el('importDesignFileInput').addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try{
+        const obj = parseBundle(reader.result);
+        if(!confirm('ظاهر فعلی با ظاهر داخل این فایل جایگزین شود؟ (رنگ‌های ذخیره‌شده با فایل ادغام می‌شوند)')){ e.target.value = ''; return; }
+        applyBundle(obj);
+        showToast('ظاهر اعمال شد');
+      }catch(err){ alert('این فایل ظاهر معتبر نیست.'); }
+      e.target.value = '';
+    };
+    reader.readAsText(file);
+  });
+  el('makeDesignCodeBtn').addEventListener('click', async () => {
+    const code = bundleToCode(designBundle());
+    const box = el('designCodeBox');
+    box.value = code;
+    let copied = false;
+    try{ await navigator.clipboard.writeText(code); copied = true; }catch(e){
+      try{ box.focus(); box.select(); copied = document.execCommand('copy'); }catch(e2){}
+    }
+    showToast(copied ? 'کد ظاهر ساخته و کپی شد' : 'کد ساخته شد؛ آن را دستی کپی کنید');
+  });
+  el('applyDesignCodeBtn').addEventListener('click', () => {
+    try{
+      applyBundle(parseBundle(el('designCodeBox').value));
+      showToast('ظاهر اعمال شد');
+    }catch(err){ alert('این کد ظاهر معتبر نیست.'); }
+  });
+
+  applyDesign();
 
   // ---------- نصب برنامه (PWA): ثبت سرویس‌ورکر + پیشنهاد نصب ----------
   (function setupInstall(){
