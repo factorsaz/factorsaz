@@ -6,7 +6,7 @@
 window.LICENSE_CONFIG = {
 
   // کلید عمومی (خروجی ابزار license-generator.html). خالی (null) = قفل خاموش
-  publicKey: {"kty":"EC","crv":"P-256","x":"pFne4CuYe0mXZI8ZRCpomXzPgX1CeA-jdPCHllPjs0o","y":"NFzdpc1ipRW6G9jTyj2pWlzm0Ogu6SJ5rUr7qhx32Ew"},
+  publicKey: {"kty":"EC","crv":"P-256","x":"Cm5igEVLJuD6MS7wnxdCgc_PWxWy-IdCCHvQjW56vM0","y":"UJEdt9BEocYdizRNDIU-DCaEDgfMAHXqq2XSE9jvYv4"},
 
   // تعداد فاکتور رایگان (ساخت فاکتور «جدید»؛ ویرایش فاکتورهای قبلی شمرده نمی‌شود)
   freeInvoices: 5,
